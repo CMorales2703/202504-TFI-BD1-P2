@@ -1,4 +1,4 @@
--codigo_barras- ==========================================
+-- ==========================================
 -- Archivo: insert_data.sql
 -- Descripción: Generación de datos masivos para DB Producto
 -- Registros: 10,000+ productos y códigos de barras
