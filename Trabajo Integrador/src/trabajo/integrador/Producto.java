@@ -2,7 +2,7 @@ package trabajo.integrador;
 
 import java.sql.Date;
 
-public class Producto {
+public class Producto{
     private long id;
     private boolean eliminado;
     private String nombre;
@@ -11,6 +11,20 @@ public class Producto {
     private double precio;
     private double peso;
     private Date fechaCreacion;
+    
+    public Producto(int id, String nombre, String marca, double precio, double peso) {
+        this.id = id;
+        this.nombre = nombre;
+        this.marca = marca;
+        this.precio = precio;
+        this.peso = peso;
+    }
+    
+    public Producto(int id, String nombre, double precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
 
     public Producto(long id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, String fechaCreacion) {
         this.id = id;
@@ -20,8 +34,74 @@ public class Producto {
         this.categoria = categoria;
         this.precio = precio;
         this.peso = peso;
+//        this.fechaCreacion = fechaCreacion;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public boolean isEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(boolean eliminado) {
+        this.eliminado = eliminado;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public double getPeso() {
+        return peso;
+    }
+
+    public void setPeso(double peso) {
+        this.peso = peso;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
     }
+    
+    
 
     public double getPrecioConIva(double iva) {
         return this.precio * (1 + iva);
@@ -38,4 +118,11 @@ public class Producto {
     public CodigoBarras obtenerCodigoBarras() {
         return new CodigoBarras(this.id, this.nombre, this.marca);
     }
+
+    @Override
+    public String toString() {
+        return "Producto{" + "id=" + id + ", eliminado=" + eliminado + ", nombre=" + nombre + ", marca=" + marca + ", categoria=" + categoria + ", precio=" + precio + ", peso=" + peso + ", fechaCreacion=" + fechaCreacion + '}';
+    }
+    
+    
 }
