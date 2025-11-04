@@ -15,44 +15,43 @@ import java.util.List;
  *
  * @author ramiromoralesdev
  */
-public class MysqlCodigoBarrasDAO implements DAO<Producto, Integer> { 
+public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> { 
 
     private Connection conn;
 
-    public MysqlProductoDAO(Connection conn) {
+    public  MysqlCodigoBarrasDAO(Connection conn) {
         this.conn = conn;
     }
 
-    @Override
-    public void crear(Producto producto) {
+    
+    public void crear(CodigoBarras c) {
         String sql = "INSERT INTO producto (id, nombre, precio) VALUES (?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDouble(1, 0);
-            ps.setString(2, producto.getNombre());
-            ps.setDouble(3, producto.getPrecio());
+            ps.setString(2, CodigoBarras.getNombre());
+            ps.setDouble(3, CodigoBarras.getPrecio());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-public void actualizar(Producto producto) {
-    String sql = "UPDATE producto SET nombre = ?, precio = ?, marca = ?, categoria = ?, peso = ? WHERE id = ?";
+public void actualizar(Producto CodigoBarras) {
+    String Producto = "UPDATE producto SET nombre = ?, precio = ?, marca = ?, categoria = ?, peso = ? WHERE id = ?";
     
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, producto.getNombre());
-        ps.setDouble(2, producto.getPrecio());
-        ps.setString(3, producto.getMarca());
-        ps.setString(4, producto.getCategoria());
-        ps.setDouble(5, producto.getPeso());
-        ps.setLong(6, producto.getId());
+    try (PreparedStatement ps = conn.prepareStatement(Producto)) {
+        ps.setString(1, CodigoBarras.getNombre());
+        ps.setDouble(2, CodigoBarras.getPrecio());
+        ps.setString(3, CodigoBarras.getMarca());
+        ps.setString(4, CodigoBarras.getCategoria());
+        ps.setDouble(5, CodigoBarras.getPeso());
+        ps.setLong(6, CodigoBarras.getId());
         
         int filas = ps.executeUpdate();
         if (filas > 0) {
-            System.out.println("✅ Producto actualizado correctamente. " + producto);
+            System.out.println("✅ Producto actualizado correctamente. " + CodigoBarras);
         } else {
-            System.out.println("No se encontró el producto con ID: " + producto.getId());
+            System.out.println("No se encontró el producto con ID: " + CodigoBarras.getId());
         }
     } catch (SQLException e) {
         System.err.println("❌ Error al actualizar el producto: " + e.getMessage());
@@ -74,20 +73,17 @@ public void actualizar(Producto producto) {
     }
 
     @Override
-    public Producto leerPorId(Integer id) {
+    public CodigoBarras leerPorId(Integer id) {
         String sql = "SELECT * FROM producto WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Producto(
+                return new CodigoBarras(
                     rs.getInt("id"),
-                    rs.getString("nombre"),
-                    rs.getString("marca"),     
-                    rs.getDouble("precio"),
-                    rs.getDouble("peso")
-    
-                );
+                    rs.getString("tipo"),
+                    rs.getString("valor")
+               );
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,24 +92,25 @@ public void actualizar(Producto producto) {
     }
 
     @Override
-    public List<Producto> leerTodos() {
-        List<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto";
+    public List<CodigoBarras> leerTodos() {
+        List<CodigoBarras> lista = new ArrayList<>();
+        String sql = "SELECT * FROM codigo_barras";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                lista.add(new Producto(
+                lista.add(new CodigoBarras(
                     rs.getInt("id"),
-                    rs.getString("nombre"),
-                    rs.getDouble("precio")
+                    rs.getObject("valor"),
+                    rs.getDouble("producto_id"),
+                    
                 ));
+                return lista;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return lista;
-    }
-}
+       
 
     
 }
+    

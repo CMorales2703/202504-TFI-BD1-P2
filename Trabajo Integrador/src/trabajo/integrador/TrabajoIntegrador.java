@@ -10,13 +10,14 @@ public class TrabajoIntegrador {
         try (Connection conn = DatabaseConfiguration.getConnection()) {
 
             MysqlProductoDAO productoDAO = new MysqlProductoDAO(conn); // Objeto DAO
+            MysqlCodigoBarrasDAO codigoBarrasDAO = new MysqlCodigoBarrasDAO(conn);
 
 //            // CREATE
 //            Producto nuevo = new Producto(0,"Producto nuevo", 15000.0);
 //            productoDAO.crear(nuevo);
 //
-//             // Mostrar todos
-//            System.out.println("📦 Lista de Productos:");
+             // Mostrar todos
+//            System.out.println(" Lista de Productos:");
 //            System.out.println("======================");
 //            List<Producto> productos = productoDAO.leerTodos();
 //            for (Producto p : productos) {
@@ -46,6 +47,11 @@ public class TrabajoIntegrador {
 
               // DELETE
 //              productoDAO.eliminar(1);
+
+
+//              ---CodigoBarras---
+             codigoBarrasDAO.leerTodos();
+             
 //            
         } catch (SQLException e) {
             System.err.println("❌ Error de conexión SQL: " + e.getMessage());

@@ -5,14 +5,21 @@ import java.sql.Date;
 public class CodigoBarras {
     private long id;
     private boolean eliminado;
-    private long produtoId;
+    private int productoId;
     private String tipo;
-    private String valor;
+    private tipoCodigoBarras valor;
     private Date Asignacion; 
     private String observaciones;
+    private MysqlProductoDAO p;
+    
+    public CodigoBarras(long id, String tipo, String valor) {
+        this.id = id;
+        this.tipo = tipo;
+        this.valor = valor;
+    }
 
-    public CodigoBarras(long produtoId, String tipo, String valor) {
-        this.produtoId = produtoId;
+    public CodigoBarras(int productoId, String tipo, String valor) {
+        this.productoId = productoId;
         this.tipo = tipo;
         this.valor = valor;
     }
@@ -26,8 +33,8 @@ public class CodigoBarras {
         return "0"; // HARDCODE falta implementar
     }
 
-    public Producto obtenerProducto() {
-        return new Producto(this.produtoId, false, "nombre", "marca", "categoria", 100, 1000, "2025-01-01"); // HARDCODE falta implementar
-    }
+//    public Producto obtenerProducto() {
+//        p.leerPorId(productoId);
+//    }
 
 }
