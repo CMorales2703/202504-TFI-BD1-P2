@@ -5,6 +5,7 @@
 package trabajo.integrador;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,73 +20,104 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
 
     private Connection conn;
 
-    public  MysqlCodigoBarrasDAO(Connection conn) {
+    public MysqlCodigoBarrasDAO(Connection conn) {
         this.conn = conn;
     }
 
-    
+    @Override
     public void crear(CodigoBarras c) {
-        String sql = "INSERT INTO producto (id, nombre, precio) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO codigo_barras (producto_id, tipo, valor, fecha_asignacion, observaciones) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDouble(1, 0);
-            ps.setString(2, CodigoBarras.getNombre());
-            ps.setDouble(3, CodigoBarras.getPrecio());
+            ps.setLong(1, c.getProductoId());
+            ps.setString(2, c.getTipo().toString());
+            ps.setString(3, c.getValor());
+            ps.setDate(4, c.getFechaAsignacion() != null ? c.getFechaAsignacion() : new Date(System.currentTimeMillis()));
+            ps.setString(5, c.getObservaciones());
             ps.executeUpdate();
+            System.out.println("✅ Código de barras creado correctamente.");
         } catch (SQLException e) {
+            System.err.println("❌ Error al crear código de barras: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-public void actualizar(Producto CodigoBarras) {
-    String Producto = "UPDATE producto SET nombre = ?, precio = ?, marca = ?, categoria = ?, peso = ? WHERE id = ?";
-    
-    try (PreparedStatement ps = conn.prepareStatement(Producto)) {
-        ps.setString(1, CodigoBarras.getNombre());
-        ps.setDouble(2, CodigoBarras.getPrecio());
-        ps.setString(3, CodigoBarras.getMarca());
-        ps.setString(4, CodigoBarras.getCategoria());
-        ps.setDouble(5, CodigoBarras.getPeso());
-        ps.setLong(6, CodigoBarras.getId());
-        
-        int filas = ps.executeUpdate();
-        if (filas > 0) {
-            System.out.println("✅ Producto actualizado correctamente. " + CodigoBarras);
-        } else {
-            System.out.println("No se encontró el producto con ID: " + CodigoBarras.getId());
+    @Override
+    public void actualizar(CodigoBarras c) {
+        // Verificar si el producto_id ya está en uso por otro código de barras
+        String checkSql = "SELECT id FROM codigo_barras WHERE producto_id = ? AND id != ?";
+        try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
+            checkPs.setLong(1, c.getProductoId());
+            checkPs.setLong(2, c.getId());
+            ResultSet rs = checkPs.executeQuery();
+            if (rs.next()) {
+                System.err.println("Error: El producto_id " + c.getProductoId() + " ya está asignado a otro código de barras (ID: " + rs.getLong("id") + ")");
+                System.err.println("   No se puede actualizar porque producto_id tiene restricción UNIQUE.");
+                return;
+            }
+        } catch (SQLException e) {
+            System.err.println(" Error al verificar producto_id: " + e.getMessage());
+            e.printStackTrace();
+            return;
         }
-    } catch (SQLException e) {
-        System.err.println("❌ Error al actualizar el producto: " + e.getMessage());
-        e.printStackTrace();
+        
+        // Si el producto_id está libre, proceder con la actualización
+        String sql = "UPDATE codigo_barras SET producto_id = ?, tipo = ?, valor = ?, fecha_asignacion = ?, observaciones = ? WHERE id = ?";
+        
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, c.getProductoId());
+            ps.setString(2, c.getTipo().toString());
+            ps.setString(3, c.getValor());
+            ps.setDate(4, c.getFechaAsignacion());
+            ps.setString(5, c.getObservaciones());
+            ps.setLong(6, c.getId());
+            
+            int filas = ps.executeUpdate();
+            if (filas > 0) {
+                System.out.println("Código de barras actualizado correctamente. " + c);
+            } else {
+                System.out.println("No se encontró el código de barras con ID: " + c.getId());
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar código de barras: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-}
-
 
     @Override
     public void eliminar(Integer id) {
-        String sql = "DELETE FROM producto WHERE id = ?";
+        String sql = "DELETE FROM codigo_barras WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.executeUpdate();
-            System.out.println("Producto eliminado" + id);
+            int filas = ps.executeUpdate();
+            if (filas > 0) {
+                System.out.println("Código de barras eliminado: " + id);
+            } else {
+                System.out.println("No se encontró el código de barras con ID: " + id);
+            }
         } catch (SQLException e) {
+            System.err.println("Error al eliminar código de barras: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     @Override
     public CodigoBarras leerPorId(Integer id) {
-        String sql = "SELECT * FROM producto WHERE id = ?";
+        String sql = "SELECT * FROM codigo_barras WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new CodigoBarras(
-                    rs.getInt("id"),
+                    rs.getLong("id"),
+                    rs.getLong("producto_id"),
                     rs.getString("tipo"),
-                    rs.getString("valor")
-               );
+                    rs.getString("valor"),
+                    rs.getDate("fecha_asignacion"),
+                    rs.getString("observaciones")
+                );
             }
         } catch (SQLException e) {
+            System.err.println(" Error al leer código de barras: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -94,23 +126,24 @@ public void actualizar(Producto CodigoBarras) {
     @Override
     public List<CodigoBarras> leerTodos() {
         List<CodigoBarras> lista = new ArrayList<>();
-        String sql = "SELECT * FROM codigo_barras";
+        String sql = "SELECT * FROM codigo_barras WHERE eliminado = FALSE";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(new CodigoBarras(
-                    rs.getInt("id"),
-                    rs.getObject("valor"),
-                    rs.getDouble("producto_id"),
-                    
+                    rs.getLong("id"),
+                    rs.getLong("producto_id"),
+                    rs.getString("tipo"),
+                    rs.getString("valor"),
+                    rs.getDate("fecha_asignacion"),
+                    rs.getString("observaciones")
                 ));
-                return lista;
             }
         } catch (SQLException e) {
+            System.err.println("Error al leer códigos de barras: " + e.getMessage());
             e.printStackTrace();
         }
-       
-
-    
+        return lista;
+    }
 }
     

@@ -2,6 +2,7 @@ package trabajo.integrador;
 
 import java.sql.*;
 import java.util.*;
+import java.sql.Date;
 
 public class MysqlProductoDAO implements DAO<Producto, Integer> {
 
@@ -13,13 +14,17 @@ public class MysqlProductoDAO implements DAO<Producto, Integer> {
 
     @Override
     public void crear(Producto producto) {
-        String sql = "INSERT INTO producto (id, nombre, precio) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO producto (nombre, marca, categoria, precio, peso) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDouble(1, 0);
-            ps.setString(2, producto.getNombre());
-            ps.setDouble(3, producto.getPrecio());
+            ps.setString(1, producto.getNombre());
+            ps.setString(2, producto.getMarca());
+            ps.setString(3, producto.getCategoria());
+            ps.setDouble(4, producto.getPrecio());
+            ps.setDouble(5, producto.getPeso());
             ps.executeUpdate();
+            System.out.println("Producto creado correctamente.");
         } catch (SQLException e) {
+            System.err.println("Error al crear producto: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -38,12 +43,12 @@ public void actualizar(Producto producto) {
         
         int filas = ps.executeUpdate();
         if (filas > 0) {
-            System.out.println("✅ Producto actualizado correctamente. " + producto);
+            System.out.println("Producto actualizado correctamente. " + producto);
         } else {
             System.out.println("No se encontró el producto con ID: " + producto.getId());
         }
     } catch (SQLException e) {
-        System.err.println("❌ Error al actualizar el producto: " + e.getMessage());
+        System.err.println("Error al actualizar el producto: " + e.getMessage());
         e.printStackTrace();
     }
 }
@@ -54,30 +59,38 @@ public void actualizar(Producto producto) {
         String sql = "DELETE FROM producto WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.executeUpdate();
-            System.out.println("Producto eliminado" + id);
+            int filas = ps.executeUpdate();
+            if (filas > 0) {
+                System.out.println("Producto eliminado: " + id);
+            } else {
+                System.out.println("No se encontró el producto con ID: " + id);
+            }
         } catch (SQLException e) {
+            System.err.println("Error al eliminar producto: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     @Override
     public Producto leerPorId(Integer id) {
-        String sql = "SELECT * FROM producto WHERE id = ?";
+        String sql = "SELECT * FROM producto WHERE id = ? AND eliminado = FALSE";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Producto(
-                    rs.getInt("id"),
+                    rs.getLong("id"),
+                    rs.getBoolean("eliminado"),
                     rs.getString("nombre"),
-                    rs.getString("marca"),     
+                    rs.getString("marca"),
+                    rs.getString("categoria"),
                     rs.getDouble("precio"),
-                    rs.getDouble("peso")
-    
+                    rs.getDouble("peso"),
+                    rs.getTimestamp("fecha_creacion") != null ? new Date(rs.getTimestamp("fecha_creacion").getTime()) : null
                 );
             }
         } catch (SQLException e) {
+            System.err.println("Error al leer producto: " + e.getMessage());
             e.printStackTrace();
         }
         return null;
@@ -86,17 +99,23 @@ public void actualizar(Producto producto) {
     @Override
     public List<Producto> leerTodos() {
         List<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto";
+        String sql = "SELECT * FROM producto WHERE eliminado = FALSE";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(new Producto(
-                    rs.getInt("id"),
+                    rs.getLong("id"),
+                    rs.getBoolean("eliminado"),
                     rs.getString("nombre"),
-                    rs.getDouble("precio")
+                    rs.getString("marca"),
+                    rs.getString("categoria"),
+                    rs.getDouble("precio"),
+                    rs.getDouble("peso"),
+                    rs.getTimestamp("fecha_creacion") != null ? new Date(rs.getTimestamp("fecha_creacion").getTime()) : null
                 ));
             }
         } catch (SQLException e) {
+            System.err.println("Error al leer productos: " + e.getMessage());
             e.printStackTrace();
         }
         return lista;

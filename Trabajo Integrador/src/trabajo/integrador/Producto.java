@@ -26,7 +26,7 @@ public class Producto{
         this.precio = precio;
     }
 
-    public Producto(long id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, String fechaCreacion) {
+    public Producto(long id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, Date fechaCreacion) {
         this.id = id;
         this.eliminado = eliminado;
         this.nombre = nombre;
@@ -34,7 +34,7 @@ public class Producto{
         this.categoria = categoria;
         this.precio = precio;
         this.peso = peso;
-//        this.fechaCreacion = fechaCreacion;
+        this.fechaCreacion = fechaCreacion;
     }
 
     public long getId() {
@@ -115,9 +115,12 @@ public class Producto{
         return this.precio > 0;
     }
     
-    public CodigoBarras obtenerCodigoBarras() {
-        return new CodigoBarras(this.id, this.nombre, this.marca);
-    }
+    // Este método necesita acceso al DAO para obtener el código de barras
+    // Se debe usar MysqlCodigoBarrasDAO.leerPorId() o buscar por producto_id
+    // public CodigoBarras obtenerCodigoBarras() {
+    //     // Requiere acceso al DAO, no se puede implementar aquí sin conexión
+    //     return null;
+    // }
 
     @Override
     public String toString() {
