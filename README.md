@@ -37,7 +37,10 @@ Sistema de gestión de productos con códigos de barras, usuarios y roles, imple
         ├── Utilidades/
         │   └── tipoCodigoBarras.java  # Enum (EAN13, EAN8, UPC)
         │
-        └── TrabajoIntegrador.java     # Clase principal con ejemplos CRUD
+        └── AppMenu.java     # Menu interactivo CRUD mediante inputs 
+        │
+        └── TrabajoIntegrador.java     # Clase principal 
+        
 ```
 
 ## 🏗️ Arquitectura
@@ -55,6 +58,10 @@ El proyecto implementa el patrón DAO para separar la lógica de acceso a datos 
 3. **Usuario**: Usuarios con autenticación y roles
 4. **Rol**: Roles del sistema con permisos
 
+
+## 🗄️ Menu interactivo CRUD
+Al ejecutar TrabajoIntegrador.java se llama a el menu donde para cada entidad tenemos un CRUD. Implementado con Switch-Case 
+
 ## 🗄️ Base de Datos
 
 - **Motor**: MySQL
@@ -64,6 +71,7 @@ El proyecto implementa el patrón DAO para separar la lógica de acceso a datos 
   - `usuario` - Usuarios (FK a rol)
   - `producto` - Catálogo de productos
   - `codigo_barras` - Códigos de barras (FK a producto, UNIQUE producto_id)
+
 
 ### Configuración de Database para levantar
 
