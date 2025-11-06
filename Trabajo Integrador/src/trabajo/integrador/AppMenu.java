@@ -2,9 +2,18 @@ package trabajo.integrador;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import trabajo.integrador.dao.MysqlCodigoBarrasDAO;
+import trabajo.integrador.dao.MysqlProductoDAO;
+import trabajo.integrador.dao.MysqlRolDAO;
+import trabajo.integrador.dao.MysqlUsuarioDAO;
+import trabajo.integrador.dao.tipoCodigoBarras;
+import trabajo.integrador.entities.CodigoBarras;
+import trabajo.integrador.entities.Producto;
+import trabajo.integrador.entities.Rol;
+import trabajo.integrador.entities.Usuario;
 
 public class AppMenu {
 	private final Scanner scanner = new Scanner(System.in);

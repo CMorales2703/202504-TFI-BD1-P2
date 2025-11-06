@@ -1,8 +1,14 @@
-package trabajo.integrador;
+package trabajo.integrador.dao;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import trabajo.integrador.entities.Producto;
 
 public class MysqlProductoDAO implements DAO<Producto, Integer> {
 

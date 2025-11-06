@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package trabajo.integrador;
+package trabajo.integrador.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -11,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import trabajo.integrador.entities.CodigoBarras;
+import trabajo.integrador.dao.tipoCodigoBarras;
 
 /**
  *

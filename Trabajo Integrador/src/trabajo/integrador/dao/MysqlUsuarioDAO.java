@@ -1,4 +1,6 @@
-package trabajo.integrador;
+package trabajo.integrador.dao;
+
+import trabajo.integrador.entities.Usuario;
 
 import java.sql.Connection;
 import java.sql.Date;

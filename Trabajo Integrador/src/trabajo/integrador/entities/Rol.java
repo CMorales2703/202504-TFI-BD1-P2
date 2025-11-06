@@ -1,4 +1,4 @@
-package trabajo.integrador;
+package trabajo.integrador.entities;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package trabajo.integrador;
+package trabajo.integrador.dao;
 
 import java.util.List;
 

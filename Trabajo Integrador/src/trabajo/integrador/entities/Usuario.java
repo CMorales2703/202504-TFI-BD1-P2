@@ -1,4 +1,6 @@
-package trabajo.integrador;
+package trabajo.integrador.entities;
+
+import trabajo.integrador.dao.MysqlRolDAO;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

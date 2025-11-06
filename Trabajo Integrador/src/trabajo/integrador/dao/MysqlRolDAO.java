@@ -1,4 +1,6 @@
-package trabajo.integrador;
+package trabajo.integrador.dao;
+
+import trabajo.integrador.entities.Rol;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

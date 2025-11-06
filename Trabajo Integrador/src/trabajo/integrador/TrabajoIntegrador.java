@@ -1,9 +1,13 @@
 package trabajo.integrador;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
-import java.util.List;
+
+import trabajo.integrador.config.DatabaseConfiguration;
+import trabajo.integrador.dao.MysqlCodigoBarrasDAO;
+import trabajo.integrador.dao.MysqlProductoDAO;
+import trabajo.integrador.dao.MysqlRolDAO;
+import trabajo.integrador.dao.MysqlUsuarioDAO;
 
 public class TrabajoIntegrador {
 	public static void main(String[] args) {

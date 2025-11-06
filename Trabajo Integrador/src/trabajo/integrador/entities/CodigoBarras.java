@@ -1,4 +1,6 @@
-package trabajo.integrador;
+package trabajo.integrador.entities;
+
+import trabajo.integrador.dao.tipoCodigoBarras;
 
 import java.sql.Date;
 
