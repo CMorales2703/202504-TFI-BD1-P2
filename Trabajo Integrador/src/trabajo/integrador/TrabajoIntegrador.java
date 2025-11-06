@@ -24,7 +24,8 @@ public class TrabajoIntegrador {
 //            System.out.println("======================");
 //            List<Producto> productos = productoDAO.leerTodos();
 //            for (Producto p : productos) {
-//                System.out.println(p.getId() + " | " + p.getNombre() + " | $" + p.getPrecio());
+//                System.out.println(p.getId() + " | " + p.getNombre() + " | $" + p.getPrecio() 
+//                    + " | Con IVA: $" + p.getPrecioConIva(0.21) + " | Peso: " + p.getPesoEnKilos() + " kg");
 //            }
 //
             // Buscar por ID (ejemplo)
@@ -36,6 +37,15 @@ public class TrabajoIntegrador {
 //                        + " Precio: " +  buscado.getPrecio()
 //                        + " Peso: " + buscado.getPeso()
 //                );
+//                // Usar métodos de la entidad Producto
+//                double iva = 0.21; // 21% IVA
+//                double precioConIva = buscado.getPrecioConIva(iva);
+//                double pesoEnKilos = buscado.getPesoEnKilos();
+//                boolean precioValido = buscado.validarPrecio();
+//                
+//                System.out.println("Precio con IVA (21%): $" + precioConIva);
+//                System.out.println("Peso en kilos: " + pesoEnKilos + " kg");
+//                System.out.println("Precio válido: " + precioValido);
 //            } else {
 //                System.out.println("Producto no encontrado.");
 //            }
@@ -178,6 +188,9 @@ public class TrabajoIntegrador {
 //
             // DELETE
             usuarioDAO.eliminar(3);
+            
+            // Metodos
+            
            
            
              

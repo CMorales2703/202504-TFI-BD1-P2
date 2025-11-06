@@ -88,11 +88,78 @@ public class CodigoBarras {
     }
 
     public boolean validarFormato() {
-        return true; // HARDCODE falta implementar
+        if (valor == null || valor.isEmpty()) {
+            return false;
+        }
+        
+        // Verificar que solo contenga dígitos
+        if (!valor.matches("\\d+")) {
+            return false;
+        }
+        
+        // Validar longitud según el tipo
+        switch (tipo) {
+            case EAN13:
+                return valor.length() == 13;
+            case EAN8:
+                return valor.length() == 8;
+            case UPC:
+                return valor.length() == 12;
+            default:
+                return false;
+        }
     }
 
+
     public String generarDigitoVerificador() {
-        return "0"; // HARDCODE falta implementar
+        if (valor == null || valor.isEmpty()) {
+            return "0";
+        }
+        
+        // Obtener los dígitos sin el último (si existe)
+        String codigoSinDigito;
+        int longitudEsperada;
+        
+        switch (tipo) {
+            case EAN13:
+                longitudEsperada = 13;
+                codigoSinDigito = valor.length() >= 12 ? valor.substring(0, 12) : valor;
+                break;
+            case EAN8:
+                longitudEsperada = 8;
+                codigoSinDigito = valor.length() >= 7 ? valor.substring(0, 7) : valor;
+                break;
+            case UPC:
+                longitudEsperada = 12;
+                codigoSinDigito = valor.length() >= 11 ? valor.substring(0, 11) : valor;
+                break;
+            default:
+                return "0";
+        }
+        
+        // Si el código ya tiene la longitud completa, usar todos excepto el último
+        if (codigoSinDigito.length() == longitudEsperada - 1) {
+            // Calcular dígito verificador
+            int suma = 0;
+            for (int i = 0; i < codigoSinDigito.length(); i++) {
+                int digito = Character.getNumericValue(codigoSinDigito.charAt(i));
+            
+                // índice 0 = posición 1 (impar) -> x1
+                // índice 1 = posición 2 (par) -> x3
+                if (i % 2 == 0) {
+                    suma += digito * 1;
+                } else {
+                    suma += digito * 3;
+                }
+            }
+            
+            // Calcular dígito verificador: (10 - (suma % 10)) % 10
+            int digitoVerificador = (10 - (suma % 10)) % 10;
+            return String.valueOf(digitoVerificador);
+        }
+        
+        // Si el código no tiene la longitud correcta, retornar 0
+        return "0";
     }
 
     @Override

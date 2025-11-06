@@ -1,22 +1,26 @@
 package trabajo.integrador;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Rol {
     private long id;
     private String nombre;
     private String descripcion;
+    private List<String> permisos;
 
     public Rol(long id, String nombre, String descripcion) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.permisos = new ArrayList<>();
     }
     
     // Constructor para crear nuevo (sin ID)
     public Rol(String nombre, String descripcion) {
         this.nombre = nombre;
         this.descripcion = descripcion;
+        this.permisos = new ArrayList<>();
     }
 
     // Getters y Setters
@@ -45,12 +49,46 @@ public class Rol {
     }
 
     public List<String> getPermisos() {
-        System.out.println("Permisos del rol"); // HARDCODE falta implementar
-        return null;
+        if (permisos == null) {
+            permisos = new ArrayList<>();
+        }
+        // Retornar una copia para evitar modificaciones externas no controladas
+        return new ArrayList<>(permisos);
     }
 
+  
     public void asignarPermisos(List<String> permisos) {
-        System.out.println("Permisos otorgados"); // HARDCODE falta implementar
+        if (permisos == null) {
+            this.permisos = new ArrayList<>();
+        } else {
+            // Crear una copia para evitar referencias externas
+            this.permisos = new ArrayList<>(permisos);
+        }
+    }
+    
+
+    public void agregarPermiso(String permiso) {
+        if (permisos == null) {
+            permisos = new ArrayList<>();
+        }
+        if (permiso != null && !permiso.trim().isEmpty() && !permisos.contains(permiso)) {
+            permisos.add(permiso);
+        }
+    }
+    
+
+    public boolean eliminarPermiso(String permiso) {
+        if (permisos == null) {
+            return false;
+        }
+        return permisos.remove(permiso);
+    }
+    
+    public boolean tienePermiso(String permiso) {
+        if (permisos == null || permiso == null) {
+            return false;
+        }
+        return permisos.contains(permiso);
     }
 
     @Override

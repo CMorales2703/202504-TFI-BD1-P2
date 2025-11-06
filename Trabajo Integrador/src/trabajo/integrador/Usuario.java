@@ -1,5 +1,7 @@
 package trabajo.integrador;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
 public class Usuario {
@@ -99,12 +101,59 @@ public class Usuario {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public boolean login(String username, String password) {
-        return this.username.equals(username) && this.passwordHash.equals(password); // HARDCODE falta implementar
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(password.getBytes());
+            
+            // Convertir bytes a hexadecimal
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Error al generar hash: " + e.getMessage());
+            return null;
+        }
     }
 
+
+    public boolean login(String username, String password) {
+        if (username == null || password == null) {
+            return false;
+        }
+        
+        // Verificar que el usuario esté activo
+        if (activo == null || !activo) {
+            return false;
+        }
+        
+        // Verificar username
+        if (!this.username.equals(username)) {
+            return false;
+        }
+        
+        // Hashear la contraseña ingresada y comparar con el hash guardado
+        String passwordHashIngresado = hashPassword(password);
+        return passwordHashIngresado != null && this.passwordHash.equals(passwordHashIngresado);
+    }
+
+
     public void cambiarPassword(String newPassword) {
-        this.passwordHash = newPassword; // HARDCODE falta implementar
+        if (newPassword == null || newPassword.isEmpty()) {
+            System.err.println("Error: La contraseña no puede estar vacía");
+            return;
+        }
+        
+        // Hashear la contraseña antes de guardarla
+        String hashedPassword = hashPassword(newPassword);
+        if (hashedPassword != null) {
+            this.passwordHash = hashedPassword;
+        } else {
+            System.err.println("Error: No se pudo hashear la contraseña");
+        }
     }
 
     public void activarUsuario() {
@@ -115,8 +164,19 @@ public class Usuario {
         this.activo = false;
     }
 
-    public Rol obtenerRol() {
-        return null; // HARDCODE falta implementar - necesita acceso al DAO
+ 
+    public Rol obtenerRol(MysqlRolDAO rolDAO) {
+        if (rolDAO == null) {
+            System.err.println("Error: El DAO de roles no puede ser null");
+            return null;
+        }
+        
+        try {
+            return rolDAO.leerPorId((int) this.rolId);
+        } catch (Exception e) {
+            System.err.println("Error al obtener el rol: " + e.getMessage());
+            return null;
+        }
     }
     
     @Override
