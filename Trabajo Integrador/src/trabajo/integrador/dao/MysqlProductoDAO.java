@@ -21,14 +21,24 @@ public class MysqlProductoDAO implements DAO<Producto, Integer> {
     @Override
     public void crear(Producto producto) {
         String sql = "INSERT INTO producto (nombre, marca, categoria, precio, peso) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, producto.getNombre());
             ps.setString(2, producto.getMarca());
             ps.setString(3, producto.getCategoria());
             ps.setDouble(4, producto.getPrecio());
             ps.setDouble(5, producto.getPeso());
             ps.executeUpdate();
-            System.out.println("Producto creado correctamente.");
+            
+            // Obtener el ID generado con el auto_increment
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    long idGenerado = generatedKeys.getLong(1);
+                    producto.setId(idGenerado);
+                    System.out.println("Producto creado correctamente con ID: " + idGenerado);
+                } else {
+                    System.out.println("Producto creado correctamente, pero no se pudo obtener el ID generado.");
+                }
+            }
         } catch (SQLException e) {
             System.err.println("Error al crear producto: " + e.getMessage());
             e.printStackTrace();
