@@ -3,7 +3,7 @@ package trabajo.integrador.entities;
 import java.sql.Date;
 
 public class Producto{
-    private long id;
+    private int id;
     private boolean eliminado;
     private String nombre;
     private String marca;
@@ -26,7 +26,7 @@ public class Producto{
         this.precio = precio;
     }
 
-    public Producto(long id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, Date fechaCreacion) {
+    public Producto(int id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, Date fechaCreacion) {
         this.id = id;
         this.eliminado = eliminado;
         this.nombre = nombre;
@@ -37,11 +37,11 @@ public class Producto{
         this.fechaCreacion = fechaCreacion;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -29,7 +29,7 @@ public class MysqlUsuarioDAO implements DAO<Usuario, Integer> {
             ps.setString(1, usuario.getUsername());
             ps.setString(2, usuario.getEmail());
             ps.setString(3, usuario.getPasswordHash());
-            ps.setLong(4, usuario.getRolId());
+            ps.setInt(4, usuario.getRolId());
             ps.setBoolean(5, usuario.getActivo() != null ? usuario.getActivo() : true);
             ps.executeUpdate();
             System.out.println("Usuario creado correctamente.");
@@ -45,10 +45,10 @@ public class MysqlUsuarioDAO implements DAO<Usuario, Integer> {
         String checkUsernameSql = "SELECT id FROM usuario WHERE username = ? AND id != ?";
         try (PreparedStatement checkPs = conn.prepareStatement(checkUsernameSql)) {
             checkPs.setString(1, usuario.getUsername());
-            checkPs.setLong(2, usuario.getId());
+            checkPs.setInt(2, usuario.getId());
             ResultSet rs = checkPs.executeQuery();
             if (rs.next()) {
-                System.err.println("Error: El username '" + usuario.getUsername() + "' ya está asignado a otro usuario (ID: " + rs.getLong("id") + ")");
+                System.err.println("Error: El username '" + usuario.getUsername() + "' ya está asignado a otro usuario (ID: " + rs.getInt("id") + ")");
                 System.err.println("   No se puede actualizar porque username tiene restricción UNIQUE.");
                 return;
             }
@@ -62,10 +62,10 @@ public class MysqlUsuarioDAO implements DAO<Usuario, Integer> {
         String checkEmailSql = "SELECT id FROM usuario WHERE email = ? AND id != ?";
         try (PreparedStatement checkPs = conn.prepareStatement(checkEmailSql)) {
             checkPs.setString(1, usuario.getEmail());
-            checkPs.setLong(2, usuario.getId());
+            checkPs.setInt(2, usuario.getId());
             ResultSet rs = checkPs.executeQuery();
             if (rs.next()) {
-                System.err.println("Error: El email '" + usuario.getEmail() + "' ya está asignado a otro usuario (ID: " + rs.getLong("id") + ")");
+                System.err.println("Error: El email '" + usuario.getEmail() + "' ya está asignado a otro usuario (ID: " + rs.getInt("id") + ")");
                 System.err.println("   No se puede actualizar porque email tiene restricción UNIQUE.");
                 return;
             }
@@ -82,9 +82,9 @@ public class MysqlUsuarioDAO implements DAO<Usuario, Integer> {
             ps.setString(1, usuario.getUsername());
             ps.setString(2, usuario.getEmail());
             ps.setString(3, usuario.getPasswordHash());
-            ps.setLong(4, usuario.getRolId());
+            ps.setInt(4, usuario.getRolId());
             ps.setBoolean(5, usuario.getActivo() != null ? usuario.getActivo() : true);
-            ps.setLong(6, usuario.getId());
+            ps.setInt(6, usuario.getId());
             
             int filas = ps.executeUpdate();
             if (filas > 0) {
@@ -123,12 +123,12 @@ public class MysqlUsuarioDAO implements DAO<Usuario, Integer> {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Usuario(
-                    rs.getLong("id"),
+                    rs.getInt("id"),
                     rs.getBoolean("eliminado"),
                     rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password_hash"),
-                    rs.getLong("rol_id"),
+                    rs.getInt("rol_id"),
                     rs.getBoolean("activo"),
                     rs.getTimestamp("fecha_registro") != null ? new Date(rs.getTimestamp("fecha_registro").getTime()) : null
                 );
@@ -148,12 +148,12 @@ public class MysqlUsuarioDAO implements DAO<Usuario, Integer> {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(new Usuario(
-                    rs.getLong("id"),
+                    rs.getInt("id"),
                     rs.getBoolean("eliminado"),
                     rs.getString("username"),
                     rs.getString("email"),
                     rs.getString("password_hash"),
-                    rs.getLong("rol_id"),
+                    rs.getInt("rol_id"),
                     rs.getBoolean("activo"),
                     rs.getTimestamp("fecha_registro") != null ? new Date(rs.getTimestamp("fecha_registro").getTime()) : null
                 ));

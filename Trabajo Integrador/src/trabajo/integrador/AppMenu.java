@@ -171,7 +171,7 @@ public class AppMenu {
 
 	private void crearCodigoBarras() {
 		System.out.print("Producto ID: ");
-		long productoId = readLong();
+		int productoId = readInt();
 		System.out.print("Tipo (EAN13/EAN8/UPC): ");
 		String tipoStr = readLine().toUpperCase();
 		tipoCodigoBarras tipo = tipoCodigoBarras.valueOf(tipoStr);
@@ -213,7 +213,7 @@ public class AppMenu {
 			return;
 		}
 		System.out.print("Producto ID (actual: " + existente.getProductoId() + "): ");
-		long productoId = readLong();
+		int productoId = readInt();
 		System.out.print("Tipo (EAN13/EAN8/UPC) (actual: " + existente.getTipo() + "): ");
 		tipoCodigoBarras tipo = tipoCodigoBarras.valueOf(readLine().toUpperCase());
 		System.out.print("Valor (actual: " + existente.getValor() + "): ");
@@ -265,7 +265,7 @@ public class AppMenu {
 		System.out.print("Password (texto plano, se guardará hasheado): ");
 		String password = readLine();
 		System.out.print("Rol ID: ");
-		long rolId = readLong();
+		int rolId = readInt();
 
 		Usuario u = new Usuario(username, email, "", rolId);
 		u.cambiarPassword(password);
@@ -303,7 +303,7 @@ public class AppMenu {
 		System.out.print("Nuevo email (actual: " + u.getEmail() + "): ");
 		String email = readLine();
 		System.out.print("Nuevo rolId (actual: " + u.getRolId() + "): ");
-		long rolId = readLong();
+		int rolId = readInt();
 		System.out.print("Cambiar password? (s/n): ");
 		String cambiar = readLine();
 		String passwordHash = u.getPasswordHash();
@@ -406,16 +406,6 @@ public class AppMenu {
 		}
 	}
 
-	private long readLong() {
-		while (true) {
-			try {
-				String s = scanner.nextLine();
-				return Long.parseLong(s.trim());
-			} catch (Exception e) {
-				System.out.print("Ingrese un número válido: ");
-			}
-		}
-	}
 
 	private double readDouble() {
 		while (true) {

@@ -31,7 +31,7 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
     public void crear(CodigoBarras c) {
         String sql = "INSERT INTO codigo_barras (producto_id, tipo, valor, fecha_asignacion, observaciones) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, c.getProductoId());
+            ps.setInt(1, c.getProductoId());
             ps.setString(2, c.getTipo().toString());
             ps.setString(3, c.getValor());
             ps.setDate(4, c.getFechaAsignacion() != null ? c.getFechaAsignacion() : new Date(System.currentTimeMillis()));
@@ -49,11 +49,11 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
         // Verificar si el producto_id ya está en uso por otro código de barras
         String checkSql = "SELECT id FROM codigo_barras WHERE producto_id = ? AND id != ?";
         try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
-            checkPs.setLong(1, c.getProductoId());
-            checkPs.setLong(2, c.getId());
+            checkPs.setInt(1, c.getProductoId());
+            checkPs.setInt(2, c.getId());
             ResultSet rs = checkPs.executeQuery();
             if (rs.next()) {
-                System.err.println("Error: El producto_id " + c.getProductoId() + " ya está asignado a otro código de barras (ID: " + rs.getLong("id") + ")");
+                System.err.println("Error: El producto_id " + c.getProductoId() + " ya está asignado a otro código de barras (ID: " + rs.getInt("id") + ")");
                 System.err.println("   No se puede actualizar porque producto_id tiene restricción UNIQUE.");
                 return;
             }
@@ -67,12 +67,12 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
         String sql = "UPDATE codigo_barras SET producto_id = ?, tipo = ?, valor = ?, fecha_asignacion = ?, observaciones = ? WHERE id = ?";
         
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setLong(1, c.getProductoId());
+            ps.setInt(1, c.getProductoId());
             ps.setString(2, c.getTipo().toString());
             ps.setString(3, c.getValor());
             ps.setDate(4, c.getFechaAsignacion());
             ps.setString(5, c.getObservaciones());
-            ps.setLong(6, c.getId());
+            ps.setInt(6, c.getId());
             
             int filas = ps.executeUpdate();
             if (filas > 0) {
@@ -111,8 +111,8 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new CodigoBarras(
-                    rs.getLong("id"),
-                    rs.getLong("producto_id"),
+                    rs.getInt("id"),
+                    rs.getInt("producto_id"),
                     rs.getString("tipo"),
                     rs.getString("valor"),
                     rs.getDate("fecha_asignacion"),
@@ -134,8 +134,8 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(new CodigoBarras(
-                    rs.getLong("id"),
-                    rs.getLong("producto_id"),
+                    rs.getInt("id"),
+                    rs.getInt("producto_id"),
                     rs.getString("tipo"),
                     rs.getString("valor"),
                     rs.getDate("fecha_asignacion"),

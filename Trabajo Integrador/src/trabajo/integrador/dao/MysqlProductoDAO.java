@@ -32,7 +32,7 @@ public class MysqlProductoDAO implements DAO<Producto, Integer> {
             // Obtener el ID generado con el auto_increment
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    long idGenerado = generatedKeys.getLong(1);
+                    int idGenerado = generatedKeys.getInt(1);
                     producto.setId(idGenerado);
                     System.out.println("Producto creado correctamente con ID: " + idGenerado);
                 } else {
@@ -55,7 +55,7 @@ public void actualizar(Producto producto) {
         ps.setString(3, producto.getMarca());
         ps.setString(4, producto.getCategoria());
         ps.setDouble(5, producto.getPeso());
-        ps.setLong(6, producto.getId());
+        ps.setInt(6, producto.getId());
         
         int filas = ps.executeUpdate();
         if (filas > 0) {
@@ -95,7 +95,7 @@ public void actualizar(Producto producto) {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Producto(
-                    rs.getLong("id"),
+                    rs.getInt("id"),
                     rs.getBoolean("eliminado"),
                     rs.getString("nombre"),
                     rs.getString("marca"),
@@ -120,7 +120,7 @@ public void actualizar(Producto producto) {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(new Producto(
-                    rs.getLong("id"),
+                    rs.getInt("id"),
                     rs.getBoolean("eliminado"),
                     rs.getString("nombre"),
                     rs.getString("marca"),

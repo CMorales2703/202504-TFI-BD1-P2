@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Rol {
-    private long id;
+    private int id;
     private String nombre;
     private String descripcion;
     private List<String> permisos;
 
-    public Rol(long id, String nombre, String descripcion) {
+    public Rol(int id, String nombre, String descripcion) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -24,11 +24,11 @@ public class Rol {
     }
 
     // Getters y Setters
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

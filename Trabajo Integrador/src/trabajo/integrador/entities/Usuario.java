@@ -7,17 +7,17 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
 public class Usuario {
-    private long id;
+    private int id;
     private boolean eliminado;
     private String username;
     private String email;
     private String passwordHash;
-    private long rolId;
+    private int rolId;
     private Boolean activo;
     private Date fechaRegistro;
 
     // Constructor completo
-    public Usuario(long id, boolean eliminado, String username, String email, String passwordHash, long rolId, Boolean activo, Date fechaRegistro) {
+    public Usuario(int id, boolean eliminado, String username, String email, String passwordHash, int rolId, Boolean activo, Date fechaRegistro) {
         this.id = id;
         this.eliminado = eliminado;
         this.username = username;
@@ -29,7 +29,7 @@ public class Usuario {
     }
     
     // Constructor para crear nuevo (sin ID)
-    public Usuario(String username, String email, String passwordHash, long rolId) {
+    public Usuario(String username, String email, String passwordHash, int rolId) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -39,11 +39,11 @@ public class Usuario {
     }
 
     // Getters y Setters
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -79,11 +79,11 @@ public class Usuario {
         this.passwordHash = passwordHash;
     }
 
-    public long getRolId() {
+    public int getRolId() {
         return rolId;
     }
 
-    public void setRolId(long rolId) {
+    public void setRolId(int rolId) {
         this.rolId = rolId;
     }
 
@@ -174,7 +174,7 @@ public class Usuario {
         }
         
         try {
-            return rolDAO.leerPorId((int) this.rolId);
+            return rolDAO.leerPorId(this.rolId);
         } catch (Exception e) {
             System.err.println("Error al obtener el rol: " + e.getMessage());
             return null;

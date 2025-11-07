@@ -18,28 +18,30 @@ Sistema de gestión de productos con códigos de barras, usuarios y roles, imple
 │
 └── Trabajo Integrador/          # Proyecto Java
     └── src/trabajo/integrador/
-        ├── Entidades/
+        ├── entities/             # Entidades del dominio
         │   ├── Producto.java
         │   ├── CodigoBarras.java
         │   ├── Usuario.java
         │   └── Rol.java
         │
-        ├── DAOs/                 # Capa de acceso a datos
-        │   ├── DAO.java          # Interfaz genérica
+        ├── dao/                  # Capa de acceso a datos
+        │   ├── DAO.java         # Interfaz genérica
         │   ├── MysqlProductoDAO.java
         │   ├── MysqlCodigoBarrasDAO.java
         │   ├── MysqlUsuarioDAO.java
-        │   └── MysqlRolDAO.java
-        │
-        ├── Configuración/
-        │   └── DatabaseConfiguration.java
-        │
-        ├── Utilidades/
+        │   ├── MysqlRolDAO.java
         │   └── tipoCodigoBarras.java  # Enum (EAN13, EAN8, UPC)
         │
-        └── AppMenu.java     # Menu interactivo CRUD mediante inputs 
+        ├── config/              # Configuración
+        │   └── DatabaseConfiguration.java
         │
-        └── TrabajoIntegrador.java     # Clase principal 
+        ├── services/             # Servicios transaccionales
+        │   ├── ProductoCodigoBarrasTransaccion.java
+        │   ├── UsuarioRolTransaccion.java
+        │   └── CodigoBarrasTransaccion.java
+        │
+        ├── AppMenu.java          # Menú interactivo CRUD
+        └── TrabajoIntegrador.java  # Clase principal 
         
 ```
 
@@ -57,6 +59,32 @@ El proyecto implementa el patrón DAO para separar la lógica de acceso a datos 
 2. **CodigoBarras**: Códigos asociados a productos (tipo EAN13, EAN8, UPC)
 3. **Usuario**: Usuarios con autenticación y roles
 4. **Rol**: Roles del sistema con permisos
+
+### Servicios Transaccionales
+
+El proyecto implementa servicios transaccionales para garantizar la atomicidad de operaciones complejas:
+
+- **`ProductoCodigoBarrasTransaccion`**: Operaciones atómicas entre Producto y CodigoBarras
+  - `crearProductoConCodigoBarras()`: Crea producto y código de barras de forma atómica
+  - `actualizarProductoConCodigoBarras()`: Actualiza ambas entidades transaccionalmente
+  - `eliminarProductoConCodigoBarras()`: Elimina producto y código de barras asociado
+
+- **`UsuarioRolTransaccion`**: Operaciones transaccionales para Usuario
+  - `crearUsuarioTransaccional()`: Crea usuario con garantía de atomicidad
+  - `actualizarUsuarioTransaccional()`: Actualiza usuario (incluye verificaciones) de forma atómica
+  - `eliminarUsuarioTransaccional()`: Elimina usuario transaccionalmente
+
+- **`CodigoBarrasTransaccion`**: Operaciones transaccionales para CodigoBarras
+  - `crearCodigoBarrasTransaccional()`: Crea código de barras con transacción
+  - `actualizarCodigoBarrasTransaccional()`: Actualiza código de barras (verificación + actualización atómicas)
+  - `eliminarCodigoBarrasTransaccional()`: Elimina código de barras transaccionalmente
+
+**¿Cuándo usar transacciones?**
+- Operaciones que involucran múltiples tablas (ej: Producto + CodigoBarras)
+- Operaciones con verificaciones previas que deben ser atómicas (ej: verificar UNIQUE antes de actualizar)
+- Operaciones críticas donde la integridad de datos es esencial
+
+Ver `TRANSACCIONES.md` para más detalles sobre qué entidades requieren transacciones y por qué.
 
 
 ## 🗄️ Menu interactivo CRUD
@@ -105,3 +133,23 @@ Descomentar los ejemplos en `TrabajoIntegrador.java` para probar operaciones CRU
 - **Restricciones UNIQUE**: Validación de duplicados en `producto_id`, `username`, `email`
 - **Soft Delete**: Filtrado de registros eliminados (`eliminado = FALSE`)
 - **Foreign Keys**: Integridad referencial entre tablas
+- **Transacciones**: Garantía de atomicidad en operaciones complejas (ACID)
+
+## 🔄 Transacciones
+
+El sistema implementa transacciones para garantizar la integridad de los datos en operaciones complejas. Las transacciones aseguran que todas las operaciones se completen exitosamente o se reviertan completamente (rollback) en caso de error.
+
+### Entidades que requieren transacciones:
+
+1. **Producto + CodigoBarras** ⚠️ **CRÍTICO**
+   - Relación UNIQUE: un producto solo puede tener un código de barras
+   - Las operaciones de creación/actualización deben ser atómicas
+
+2. **Usuario** ⚠️ **IMPORTANTE**
+   - Operaciones con múltiples queries (verificaciones + actualización)
+   - Previene condiciones de carrera (race conditions)
+
+3. **CodigoBarras** ⚠️ **IMPORTANTE**
+   - Verificaciones previas antes de actualizar
+   - Previene violaciones de restricciones UNIQUE
+

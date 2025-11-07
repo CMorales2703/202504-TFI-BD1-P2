@@ -42,7 +42,7 @@ public class MysqlRolDAO implements DAO<Rol, Integer> {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, rol.getNombre());
             ps.setString(2, rol.getDescripcion());
-            ps.setLong(3, rol.getId());
+            ps.setInt(3, rol.getId());
             
             int filas = ps.executeUpdate();
             if (filas > 0) {
@@ -81,7 +81,7 @@ public class MysqlRolDAO implements DAO<Rol, Integer> {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return new Rol(
-                    rs.getLong("id"),
+                    rs.getInt("id"),
                     rs.getString("nombre"),
                     rs.getString("descripcion")
                 );
@@ -101,7 +101,7 @@ public class MysqlRolDAO implements DAO<Rol, Integer> {
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 lista.add(new Rol(
-                    rs.getLong("id"),
+                    rs.getInt("id"),
                     rs.getString("nombre"),
                     rs.getString("descripcion")
                 ));

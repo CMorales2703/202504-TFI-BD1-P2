@@ -5,16 +5,16 @@ import trabajo.integrador.dao.tipoCodigoBarras;
 import java.sql.Date;
 
 public class CodigoBarras {
-    private long id;
+    private int id;
     private boolean eliminado;
-    private long productoId;
+    private int productoId;
     private tipoCodigoBarras tipo;
     private String valor;
     private Date fechaAsignacion; 
     private String observaciones;
     
     // Constructor completo
-    public CodigoBarras(long id, long productoId, String tipo, String valor, Date fechaAsignacion, String observaciones) {
+    public CodigoBarras(int id, int productoId, String tipo, String valor, Date fechaAsignacion, String observaciones) {
         this.id = id;
         this.productoId = productoId;
         this.tipo = tipoCodigoBarras.valueOf(tipo.toUpperCase());
@@ -24,7 +24,7 @@ public class CodigoBarras {
     }
     
     // Constructor para crear nuevo (sin ID)
-    public CodigoBarras(long productoId, tipoCodigoBarras tipo, String valor, Date fechaAsignacion, String observaciones) {
+    public CodigoBarras(int productoId, tipoCodigoBarras tipo, String valor, Date fechaAsignacion, String observaciones) {
         this.productoId = productoId;
         this.tipo = tipo;
         this.valor = valor;
@@ -33,11 +33,11 @@ public class CodigoBarras {
     }
 
     // Getters
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -49,11 +49,11 @@ public class CodigoBarras {
         this.eliminado = eliminado;
     }
 
-    public long getProductoId() {
+    public int getProductoId() {
         return productoId;
     }
 
-    public void setProductoId(long productoId) {
+    public void setProductoId(int productoId) {
         this.productoId = productoId;
     }
 
