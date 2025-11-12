@@ -129,7 +129,7 @@ public class MysqlCodigoBarrasDAO implements DAO<CodigoBarras, Integer> {
     @Override
     public List<CodigoBarras> leerTodos() {
         List<CodigoBarras> lista = new ArrayList<>();
-        String sql = "SELECT * FROM codigo_barras WHERE eliminado = FALSE";
+        String sql = "SELECT * FROM codigo_barras";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {

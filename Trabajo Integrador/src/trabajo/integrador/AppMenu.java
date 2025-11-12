@@ -86,18 +86,42 @@ public class AppMenu {
 		double precio = readDouble();
 		System.out.print("Peso (gramos): ");
 		double peso = readDouble();
+             
 
 		Producto p = new Producto(0, nombre, precio);
 		p.setMarca(marca);
 		p.setCategoria(categoria);
 		p.setPeso(peso);
 		productoDAO.crear(p);
+                
+             
+		int productoId = p.getId();
+		System.out.print("Tipo (EAN13/EAN8/UPC): ");
+		String tipoStr = readLine().toUpperCase();
+		tipoCodigoBarras tipo = tipoCodigoBarras.valueOf(tipoStr);
+		System.out.print("Valor (numérico): ");
+		String valor = readLine();
+		System.out.print("Fecha asignación (YYYY-MM-DD): ");
+		Date fecha = Date.valueOf(readLine());
+		System.out.print("Observaciones: ");
+		String obs = readLine();
+
+		CodigoBarras c = new CodigoBarras(productoId, tipo, valor, fecha, obs);
+		codigoBarrasDAO.crear(c);
 	}
 
 	private void listarProductos() {
 		List<Producto> lista = productoDAO.leerTodos();
 		for (Producto p : lista) {
-			System.out.println(p.getId() + " | " + p.getNombre() + " | $" + p.getPrecio());
+			System.out.println(
+				p.getId() + " | " + p.getNombre()
+				+ " | $" + p.getPrecio()
+				+ " | Marca: " + (p.getMarca() != null ? p.getMarca() : "-")
+				+ " | Categoria: " + (p.getCategoria() != null ? p.getCategoria() : "-")
+				+ " | Peso(g): " + p.getPeso()
+				+ " | FechaCreacion: " + (p.getFechaCreacion() != null ? p.getFechaCreacion() : "-")
+				+ " | CodigoID: " + (p.getCodigoId() != 0 ? p.getCodigoId() : "Codigo de barras no asignado al producto") 
+			);
 		}
 	}
 
@@ -189,7 +213,11 @@ public class AppMenu {
 	private void listarCodigos() {
 		List<CodigoBarras> lista = codigoBarrasDAO.leerTodos();
 		for (CodigoBarras c : lista) {
-			System.out.println(c.getId() + " | " + c.getTipo() + " | " + c.getValor());
+			System.out.println(
+				c.getId() + " | " + c.getTipo() + " | " + c.getValor()
+				+ " | ProductoID: " + c.getProductoId()
+				+ " | FechaAsignacion: " + (c.getFechaAsignacion() != null ? c.getFechaAsignacion() : "-")
+			);
 		}
 	}
 

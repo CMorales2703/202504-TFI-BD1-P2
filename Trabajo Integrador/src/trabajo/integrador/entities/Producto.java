@@ -11,6 +11,8 @@ public class Producto{
     private double precio;
     private double peso;
     private Date fechaCreacion;
+    private int codigo_id;
+    private String codigo_barras;
     
     public Producto(int id, String nombre, String marca, double precio, double peso) {
         this.id = id;
@@ -26,7 +28,7 @@ public class Producto{
         this.precio = precio;
     }
 
-    public Producto(int id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, Date fechaCreacion) {
+    public Producto(int id, boolean eliminado, String nombre, String marca, String categoria, double precio, double peso, Date fechaCreacion, int codigo_id) {
         this.id = id;
         this.eliminado = eliminado;
         this.nombre = nombre;
@@ -35,6 +37,8 @@ public class Producto{
         this.precio = precio;
         this.peso = peso;
         this.fechaCreacion = fechaCreacion;
+        this.codigo_id = codigo_id;
+        
     }
 
     public int getId() {
@@ -101,6 +105,14 @@ public class Producto{
         this.fechaCreacion = fechaCreacion;
     }
     
+    public int getCodigoId() {
+        return this.codigo_id;
+    }
+
+    public void setCodigoId(int codigo_id) {
+        this.codigo_id = codigo_id;
+    }
+    
     
 
     public double getPrecioConIva(double iva) {
@@ -124,7 +136,7 @@ public class Producto{
 
     @Override
     public String toString() {
-        return "Producto{" + "id=" + id + ", eliminado=" + eliminado + ", nombre=" + nombre + ", marca=" + marca + ", categoria=" + categoria + ", precio=" + precio + ", peso=" + peso + ", fechaCreacion=" + fechaCreacion + '}';
+        return "Producto{" + "id=" + id + ", eliminado=" + eliminado + ", nombre=" + nombre + ", marca=" + marca + ", categoria=" + categoria + ", precio=" + precio + ", peso=" + peso + ", fechaCreacion=" + fechaCreacion + ", codigo_barras_id=" + codigo_id + '}';
     }
     
     

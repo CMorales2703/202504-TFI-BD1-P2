@@ -35,6 +35,7 @@ public class MysqlProductoDAO implements DAO<Producto, Integer> {
                     int idGenerado = generatedKeys.getInt(1);
                     producto.setId(idGenerado);
                     System.out.println("Producto creado correctamente con ID: " + idGenerado);
+                 
                 } else {
                     System.out.println("Producto creado correctamente, pero no se pudo obtener el ID generado.");
                 }
@@ -89,12 +90,14 @@ public void actualizar(Producto producto) {
 
     @Override
     public Producto leerPorId(Integer id) {
-        String sql = "SELECT * FROM producto WHERE id = ? AND eliminado = FALSE";
+    // Use INNER JOIN to fetch the codigo_barras.id for the producto (only products with a code will be returned)
+    String sql = "SELECT p.*, cb.id AS codigo_barras_id FROM producto p INNER JOIN codigo_barras cb ON cb.producto_id = p.id WHERE p.id = ? AND p.eliminado = FALSE";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Producto(
+                // Build Producto first, then set codigo_id explicitly from ResultSet
+                Producto producto = new Producto(
                     rs.getInt("id"),
                     rs.getBoolean("eliminado"),
                     rs.getString("nombre"),
@@ -102,8 +105,16 @@ public void actualizar(Producto producto) {
                     rs.getString("categoria"),
                     rs.getDouble("precio"),
                     rs.getDouble("peso"),
-                    rs.getTimestamp("fecha_creacion") != null ? new Date(rs.getTimestamp("fecha_creacion").getTime()) : null
+                    rs.getTimestamp("fecha_creacion") != null ? new Date(rs.getTimestamp("fecha_creacion").getTime()) : null,
+                    0
                 );
+
+                Object obj = rs.getObject("codigo_barras_id");
+                if (obj != null) {
+                    producto.setCodigoId(rs.getInt("codigo_barras_id"));
+                }
+                return producto;
+
             }
         } catch (SQLException e) {
             System.err.println("Error al leer producto: " + e.getMessage());
@@ -115,11 +126,13 @@ public void actualizar(Producto producto) {
     @Override
     public List<Producto> leerTodos() {
         List<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM producto WHERE eliminado = FALSE";
+    // Use INNER JOIN to fetch productos that have a codigo_barras (join on producto_id)
+    String sql = "SELECT p.*, cb.id AS codigo_barras_id FROM producto p INNER JOIN codigo_barras cb ON cb.producto_id = p.id";
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                lista.add(new Producto(
+                // Build Producto without codigo_id then set it from ResultSet
+                Producto producto = new Producto(
                     rs.getInt("id"),
                     rs.getBoolean("eliminado"),
                     rs.getString("nombre"),
@@ -127,8 +140,16 @@ public void actualizar(Producto producto) {
                     rs.getString("categoria"),
                     rs.getDouble("precio"),
                     rs.getDouble("peso"),
-                    rs.getTimestamp("fecha_creacion") != null ? new Date(rs.getTimestamp("fecha_creacion").getTime()) : null
-                ));
+                    rs.getTimestamp("fecha_creacion") != null ? new Date(rs.getTimestamp("fecha_creacion").getTime()) : null,
+                    0
+                );
+                Object obj = rs.getObject("codigo_barras_id");
+                if (obj != null) {
+                    producto.setCodigoId(rs.getInt("codigo_barras_id"));
+                }
+                
+                
+                lista.add(producto);
             }
         } catch (SQLException e) {
             System.err.println("Error al leer productos: " + e.getMessage());
