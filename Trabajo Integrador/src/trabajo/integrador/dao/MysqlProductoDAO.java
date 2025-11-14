@@ -18,33 +18,49 @@ public class MysqlProductoDAO implements DAO<Producto, Integer> {
         this.conn = conn;
     }
 
-    @Override
-    public void crear(Producto producto) {
-        String sql = "INSERT INTO producto (nombre, marca, categoria, precio, peso) VALUES (?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, producto.getNombre());
-            ps.setString(2, producto.getMarca());
-            ps.setString(3, producto.getCategoria());
-            ps.setDouble(4, producto.getPrecio());
-            ps.setDouble(5, producto.getPeso());
-            ps.executeUpdate();
-            
-            // Obtener el ID generado con el auto_increment
-            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int idGenerado = generatedKeys.getInt(1);
-                    producto.setId(idGenerado);
-                    System.out.println("Producto creado correctamente con ID: " + idGenerado);
-                 
-                } else {
-                    System.out.println("Producto creado correctamente, pero no se pudo obtener el ID generado.");
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al crear producto: " + e.getMessage());
-            e.printStackTrace();
-        }
+@Override
+public void crear(Producto producto) {
+    // ✅ VALIDACIONES BÁSICAS PREVIAS
+    if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
+        System.err.println("❌ Error: El nombre del producto no puede estar vacío.");
+        return;
     }
+
+    if (producto.getPrecio() <= 0) {
+        System.err.println("❌ Error: El precio debe ser mayor a cero.");
+        return;
+    }
+
+    if (producto.getPeso() <= 0) {
+        System.err.println("❌ Error: El peso debe ser mayor a cero.");
+        return;
+    }
+
+    // ✅ Sentencia SQL segura con PreparedStatement
+    String sql = "INSERT INTO producto (nombre, marca, categoria, precio, peso) VALUES (?, ?, ?, ?, ?)";
+    try (PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        ps.setString(1, producto.getNombre());
+        ps.setString(2, producto.getMarca());
+        ps.setString(3, producto.getCategoria());
+        ps.setDouble(4, producto.getPrecio());
+        ps.setDouble(5, producto.getPeso());
+        ps.executeUpdate();
+
+        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                int idGenerado = generatedKeys.getInt(1);
+                producto.setId(idGenerado);
+                System.out.println("✅ Producto creado correctamente con ID: " + idGenerado);
+            } else {
+                System.out.println("Producto creado correctamente, pero no se pudo obtener el ID generado.");
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("❌ Error al crear producto: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
 
     @Override
 public void actualizar(Producto producto) {
