@@ -1,21 +1,19 @@
 -- ==========================================
--- Base de datos: db_producto
+-- ESQUEMA DE BASE DE DATOS - CONSTRAINTS
+-- Trabajo Final Integrador - Bases de Datos I
 -- ==========================================
+
 CREATE DATABASE IF NOT EXISTS db_producto;
 USE db_producto;
 
--- ==========================================
 -- Tabla: rol
--- ==========================================
 CREATE TABLE rol (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(50) UNIQUE NOT NULL,
     descripcion VARCHAR(255)
 );
 
--- ==========================================
 -- Tabla: usuario
--- ==========================================
 CREATE TABLE usuario (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     eliminado BOOLEAN DEFAULT FALSE,
@@ -28,9 +26,7 @@ CREATE TABLE usuario (
     FOREIGN KEY (rol_id) REFERENCES rol(id)
 );
 
--- ==========================================
 -- Tabla: producto
--- ==========================================
 CREATE TABLE producto (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     eliminado BOOLEAN DEFAULT FALSE,
@@ -42,9 +38,7 @@ CREATE TABLE producto (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ==========================================
--- Tabla: codigo_barras
--- ==========================================
+-- Tabla: codigo_barras (Relación 1:1 con producto)
 CREATE TABLE codigo_barras (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     eliminado BOOLEAN DEFAULT FALSE,
@@ -56,11 +50,32 @@ CREATE TABLE codigo_barras (
     FOREIGN KEY (producto_id) REFERENCES producto(id) ON DELETE CASCADE
 );
 
--- ==========================================
--- Índices para mejorar performance
--- ==========================================
-CREATE INDEX idx_producto_categoria ON producto(categoria);
-CREATE INDEX idx_producto_precio ON producto(precio);
-CREATE INDEX idx_codigo_barras_valor ON codigo_barras(valor);
-CREATE INDEX idx_usuario_username ON usuario(username);
-CREATE INDEX idx_usuario_rol_id ON usuario(rol_id);
+-- Tablas de soporte para transacciones
+CREATE TABLE historico_precios (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    producto_id BIGINT NOT NULL,
+    precio_anterior DECIMAL(10,2) NOT NULL,
+    precio_nuevo DECIMAL(10,2) NOT NULL,
+    usuario_id BIGINT,
+    fecha_cambio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (producto_id) REFERENCES producto(id)
+);
+
+CREATE TABLE historico_categorias (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    producto_id BIGINT NOT NULL,
+    categoria_anterior VARCHAR(80) NOT NULL,
+    categoria_nueva VARCHAR(80) NOT NULL,
+    usuario_id BIGINT,
+    fecha_cambio TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (producto_id) REFERENCES producto(id)
+);
+
+CREATE TABLE auditoria_operaciones_masivas (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    categoria VARCHAR(80) NOT NULL,
+    porcentaje_aumento DECIMAL(5,2) NOT NULL,
+    productos_afectados INT NOT NULL,
+    usuario_id BIGINT,
+    fecha_operacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
